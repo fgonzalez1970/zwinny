@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Localización onclick</title>
+    <link rel="shortcut icon" type="image/ico" href="http://www.digitaleando.com/imag/logo.ico">
+<style type="text/css">
+html,body{margin:0;padding:0;width:100%;height:100%;font-family:"Trebuchet MS",verdana,arial;}
+#texto{width:25%;float:left;vertical-align:middle;padding: 2%;}
+#mapa{width:70%;height:100%;float:right;}
+#anuncio{bottom:16px;position:absolute;right:0;width:160px;z-index:100}
+</style>
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=es"></script>
+    <script>
+<!-- //
+var map;
+var geocoder;
+var infoWindow;
+var marker;
+window.onload = function () {
+  var latLng = new google.maps.LatLng(20.6539812,-103.4222798);
+  var opciones = {
+    center: latLng,
+    zoom: 5,
+    mapTypeId: google.maps.MapTypeId.HYBRID
+  };
+  var map = new google.maps.Map(document.getElementById('mapa'), opciones);
+  geocoder = new google.maps.Geocoder();
+  infowindow = new google.maps.InfoWindow();
+  google.maps.event.addListener(map, 'click', function (event) {
+    geocoder.geocode({
+      'latLng': event.latLng
+    }, function (results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          document.getElementById('direccion').innerHTML = '<br /><span style="color:#FF0099">' + results[0].formatted_address + '</span>';
+          document.getElementById('coordenadas').innerHTML = '<br /><span style="color:#FF0099">' + results[0].geometry.location + '</span>';
+          if (marker) {
+            marker.setPosition(event.latLng)
+          } else {
+            marker = new google.maps.Marker({
+              position: event.latLng,
+              map: map
+            })
+          }
+          infowindow.setContent(results[0].formatted_address + '<br/> Coordenadas: ' + results[0].geometry.location);
+          infowindow.open(map, marker)
+        } else {
+          document.getElementById('mensaje').innerHTML = 'No se encontraron resultados'
+        }
+      } else {
+        document.getElementById('mensaje').innerHTML = 'Geocodificación  ha fallado debido a: ' + status
+      }
+    });
+  });
+}
+// -->
+</script>
+  </head>
+  <body>
+    <div id="texto">
+      <h3> Haga click sobre el mapa y verá su dirección</h3>
+      Dirección del click: <span id="direccion" style="color: #00FFB3;"></span>
+      <br/>
+      Coordenadas: <span id="coordenadas" style="color: #00FFB3;"></span>
+      <br />
+      <span id="mensaje"></span>
+    </div>
+    <div id="mapa"></div>
+    </div>
+  </body>
+</html>​

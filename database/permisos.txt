@@ -1,0 +1,18 @@
+﻿INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES
+	(42, 'Ver asignación de dispositivos', 'assignements.show', 'Prodrá ver en detalle los registros de asignaciones de dispositivos a inquilinos.', '2018-08-28 10:48:08', '2018-08-28 10:48:09'),
+	(43, 'Creación de asignaciones', 'assignements.create', 'Podrá crear registros de asignaciones de dispositivos a inquilinos', '2018-08-19 23:45:18', '2018-08-19 23:45:20'),
+	(44, 'Edición de asignaciones', 'assignements.edit', 'Podrá editar cualquier registro de asignaciones de dispositivos a inquilinos', '2018-05-09 19:29:30', '2018-05-09 19:29:30'),
+	(45, 'Eliminar asignaciones', 'assignements.destroy', 'Podrá eliminar cualquier registro de asignaciones de dispositivos a inquilinos', '2018-05-09 19:29:30', '2018-05-09 19:29:30');
+
+INSERT INTO `permission_role` (`id`, `permission_id`, `role_id`, `created_at`, `updated_at`) VALUES
+	(32, 40, 2, '2018-08-19 23:54:00', '2018-08-19 23:54:03'),
+	(33, 31, 2, NULL, NULL);
+
+
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES
+	(46, 'Ver localidades de dispositivos', 'locations.show', 'Prodrá ver en detalle los registros de localidades de dispositivos.', '2018-08-28 10:48:08', '2018-08-28 10:48:09'),
+	(47, 'Creación de localidades de dispositivos', 'locations.create', 'Podrá crear registros de localidades de dispositivos', '2018-08-19 23:45:18', '2018-08-19 23:45:20'),
+	(48, 'Edición de localidades de dispositivos', 'locations.edit', 'Podrá editar cualquier registro de localidades de dispositivos', '2018-05-09 19:29:30', '2018-05-09 19:29:30'),
+	(49, 'Eliminar localidades de dispositivos', 'locations.destroy', 'Podrá eliminar cualquier registro de localidades de dispositivos', '2018-05-09 19:29:30', '2018-05-09 19:29:30'),
+	(50, 'Colocar dispositivos en localidades', 'locations.assign', 'Podrá asignar cualquier dispositivo a una localidad', '2018-05-09 19:29:30', '2018-05-09 19:29:30'),
+	(50, 'Anular la asignación de dispositivos en localidades', 'locations.del_assign', 'Podrá eliminar cualquier asignación de dispositivo a una localidad', '2018-05-09 19:29:30', '2018-05-09 19:29:30');

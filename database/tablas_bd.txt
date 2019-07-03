@@ -1,0 +1,259 @@
+CREATE TABLE `typesAdresses` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE `typesLivPlaces` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE `continents` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+}
+
+CREATE TABLE `countries` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `id_continent` INT(10) UNSIGNED NOT NULL,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `FK_countries_continents` (`id_continent`),
+	CONSTRAINT `FK_countries_continents` FOREIGN KEY (`id_continent`) REFERENCES `continents` (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE `states` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `id_country` INT(10) UNSIGNED NOT NULL,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `FK_states_countries` (`id_country`),
+	CONSTRAINT `FK_states_countries` FOREIGN KEY (`id_country`) REFERENCES `countries` (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE `cities` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        `id_state` INT(10) UNSIGNED NOT NULL,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `FK_cities_states` (`id_state`),
+	CONSTRAINT `FK_cities_states` FOREIGN KEY (`id_state`) REFERENCES `states` (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+
+CREATE TABLE `adresses` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`id_lead` INT(10) UNSIGNED NOT NULL,
+	`id_type_adr` INT(10) UNSIGNED NULL,
+  `txt_adr` text NULL,
+  `st_ft` varchar(250) NULL,
+  `st_right` varchar(250) NULL,
+  `st_left` varchar(250) NOT NULL,
+  `id_type_livplace` INT(10) UNSIGNED NULL,
+  `num_nam_ext` varchar(250) NULL,
+  `num_nam_int` varchar(250) NULL,
+  `txt_ref` text NULL,
+  `id_continent` INT(10) UNSIGNED NULL,
+  `id_country` INT(10) UNSIGNED NULL,
+  `id_state` INT(10) UNSIGNED NULL,
+  `id_city` INT(10) UNSIGNED NULL,
+  `neighborhood` varchar(250) NULL,  
+  `sector` varchar(250) NULL,
+  `cp` varchar(250) NULL,
+  `coord_x` varchar(250) NULL,
+  `coord_y` varchar(250) NULL,
+`created_at` TIMESTAMP NULL DEFAULT NULL,
+`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `FK_adresses_users` (`user_id`),
+	INDEX `FK_adresses_typesAdresses` (`id_type_adr`),
+	INDEX `FK_adresses_typesLivPlaces` (`id_type_livplace`),
+   INDEX `FK_adresses_continents` (`id_continent`),
+	INDEX `FK_adresses_countries` (`id_country`),
+	INDEX `FK_adresses_states` (`id_state`),
+	INDEX `FK_adresses_cities` (`id_city`),
+	CONSTRAINT `FK_adresses_leads` FOREIGN KEY (`id_lead`) REFERENCES `leads` (`id`),
+	CONSTRAINT `FK_adresses_typesAdresses` FOREIGN KEY (`id_type_adr`) REFERENCES `typesadresses` (`id`),
+	CONSTRAINT `FK_adresses_typesLivPlaces` FOREIGN KEY (`id_type_livplace`) REFERENCES `typeslivplaces` (`id`),
+	CONSTRAINT `FK_adresses_continents` FOREIGN KEY (`id_continent`) REFERENCES `continents` (`id`),
+	CONSTRAINT `FK_adresses_countries` FOREIGN KEY (`id_country`) REFERENCES `crm_zwinny.countries` (`id`),
+	CONSTRAINT `FK_adresses_states` FOREIGN KEY (`id_state`) REFERENCES `crm_zwinny.states` (`id`),
+	CONSTRAINT `FK_adresses_cities` FOREIGN KEY (`id_city`) REFERENCES `crm_zwinny.cities` (`id`)
+)
+
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE `typesNetworks` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE `networks` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`id_lead` INT(11) NOT NULL,
+	`id_typenet` INT(10) UNSIGNED NULL,
+  	`notes` text NULL,
+  	`nick` varchar(250) NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+  	PRIMARY KEY (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE `typesContacts` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE `sourcesContacts` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+
+CREATE TABLE `statusContact` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE `resultsContact` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`id_status` INT(10) UNSIGNED NOT NULL,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`description` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE `t02_contacts` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`id_lead` INT(11) NOT NULL,
+	`id_client` INT(11) NOT NULL,
+	`date_cont` TIMESTAMP NULL DEFAULT NULL,
+  	`id_type_cont` INT(10) UNSIGNED NOT NULL,
+  	`id_source_cont` INT(10) UNSIGNED NOT NULL,
+  	`id_status` INT(10) UNSIGNED NOT NULL DEFAULT 1,
+  	`id_result` INT(10) UNSIGNED NOT NULL DEFAULT 1,
+        `duration_cont` time NULL,
+  	`duration_cont_seg` INT(11) NULL,
+  	`hour_ini` time NULL,
+  	`hour_fin` time NULL,
+  	`notes` text NULL,
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+  	PRIMARY KEY (`id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+CREATE TABLE IF NOT EXISTS `g01_contactos` (
+  `g01_id` bigint(30) unsigned NOT NULL auto_increment,
+  `g01_id_padre` bigint(30) NULL,
+  `g01_fecha` timestamp NULL,
+  `g01_tipo` bigint(30) NOT NULL,
+  `g01_fuente` bigint(30) NOT NULL,
+  `g01_status` bigint(30) NOT NULL,
+  `g01_result` bigint(30) NOT NULL,
+  `g01_duracion` time NOT NULL,
+  `g01_duracion_seg` bigint(30) NOT NULL,
+  `g01_hora_ini` time NULL,
+  `g01_hora_fin` time NULL,
+  `g02_id` bigint(30) NOT NULL,
+  `g01_fecha_crea` timestamp NULL,
+  `g01_user_crea` bigint(30) NOT NULL,
+  `g01_fecha_mod` timestamp NULL,
+  `g01_user_mod` bigint(30) default NULL,
+  PRIMARY KEY  (`g01_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
