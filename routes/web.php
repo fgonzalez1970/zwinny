@@ -107,6 +107,8 @@ Route::group(['middleware' => 'auth'], function () {
 		->middleware('has.permission:devices.export');
 	Route::post('/devices/import/excel', 'Iot_dispositivoController@import')->name('devices.import')
 		->middleware('has.permission:devices.import');
+	Route::get('/devices/import/kontakt', 'Iot_dispositivoController@importKontakt')->name('devices.importKontakt')
+		->middleware('has.permission:devices.import');
 		
 
 	//Assignments

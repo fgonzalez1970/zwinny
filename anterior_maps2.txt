@@ -1,0 +1,88 @@
+ <script>
+    var map;
+    var geocoder;
+    var infoWindow;
+    var marker;
+
+window.onload = function () {
+  alert("onload");
+  var latLng = new google.maps.LatLng(20.6539812,-103.4222798);
+  alert("latlng"+latLng);
+  var opciones = {
+    center: latLng,
+    zoom: 8,
+    mapTypeId: 'roadmap'
+  };
+  
+  var map = new google.maps.Map(document.getElementById('mapa'), opciones);
+  
+  geocoder = new google.maps.Geocoder();
+  infoWindow = new google.maps.InfoWindow();
+
+  // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          alert("geo");
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            //poner un marcador
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+          }, function() {
+            alert("error");
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
+  
+    //captar el click en el mapa
+    google.maps.event.addListener(map, 'click', function (event) {
+    geocoder.geocode({
+      'latLng': event.latLng
+    }, function (results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          document.getElementById('address').value = results[0].formatted_address;
+          document.getElementById('coordinates').value = results[0].geometry.location;
+          //marker = new google.maps.Marker({
+                //position: event.latLng,
+                //title: results[0].formatted_address
+            //});
+
+          if (marker) {
+            marker.setPosition(event.latLng)
+          } else {
+            //alert("mark");
+            marker = new google.maps.Marker({
+              position: event.latLng,
+              map: map,
+              title: results[0].formatted_address
+            })
+          }
+          infoWindow.setContent(results[0].formatted_address + '<br/> Coordenadas: ' + results[0].geometry.location);
+          infoWindow.open(map, marker)
+        } else {
+          document.getElementById('mensaje').innerHTML = 'No se encontraron resultados'
+        }
+      } else {
+        document.getElementById('mensaje').innerHTML = 'Geocodificación  ha fallado debido a: ' + status
+      }
+    });
+  });
+}//onload function
+  </script>

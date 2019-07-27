@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Iot_subtipo_dispositivo;
 use App\Iot_tipo_dispositivo;
-use App\Iot_dispositivos_tenant;
+use App\Iot_dispositivos_tenants;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 
@@ -23,7 +23,7 @@ class Iot_dispositivo extends Model
  	*/
 	public function haveTenants()
 	{
-    	return $this->belongsToMany('App\Iot_dispositivos_tenant', 'Iot_dispositivos_tenants', 'id_dispositivo');
+    	return $this->belongsToMany('App\Iot_dispositivos_tenant', 'Iot_dispositivos_tenant', 'id_dispositivo');
     }
 
 	public function getNameById($id)

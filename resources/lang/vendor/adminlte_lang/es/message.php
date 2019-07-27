@@ -291,4 +291,11 @@ return [
     'radiusMts' => 'Radio(mts)',
     'assignDevLoc' => 'Asignaciones Dispositivo/Localidad',
     'createAssignDevLoc' => 'Asignar Dispositivo/Localidad',
+    'updateOK' => 'Registros actualizados correctamente',
+    'importOK' => 'Archivo importado correctamente',
+    'importNOK' => 'Error al importar archivo',
+    'createOK' => 'Registro creado correctamente',
+    'createUserNOK' => 'El usuario debe tener almenos 1 rol asignado'
+    'deleteOK' => 'Registro eliminado correctamente',
+    'deleteDeviceNOK' => 'El dispositivo está atado al menos a UN Inquilino',
 ];

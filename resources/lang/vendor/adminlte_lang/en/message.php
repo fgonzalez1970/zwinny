@@ -292,4 +292,14 @@ return [
     'radiusMts' => 'Radius(mts)',
     'assignDevLoc' => 'Device/Location Assignments',
     'createAssignDevLoc' => 'Assign Device/Location',
+    'updateOK' => 'Records updated correctly',
+    'importOK' => 'File import correctly',
+    'importKtkOK' => 'Registers import correctly',
+    'importNOK' => 'Error when importing file',
+    'importKtkNOK' => 'Error when importing registers',
+    'createOK' => 'Record created correctly',
+    'createUserNOK' => 'The User must have at least 1 assigned role',
+    'deleteOK' => 'Record deleted correctly',
+    'deleteDeviceNOK' => 'The device is tied to at least one Tenant',
+
 ];

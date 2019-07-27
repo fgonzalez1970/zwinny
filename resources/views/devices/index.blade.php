@@ -4,7 +4,7 @@
 	{{ trans('adminlte_lang::message.devices') }}
 @endsection
 
-<?php use App\Http\Controllers\Iot_dispositivoController; 
+<?php use App\Http\Controllers\Iot_dispositivoController;  
 $deviceControl = new Iot_dispositivoController; ?>
 
 @section('main-content')
@@ -20,15 +20,16 @@ $deviceControl = new Iot_dispositivoController; ?>
 							<button class="btn btn-warning btn-sm pull-right export" onclick="location.href = '{{ route('devices.export') }}'">
                   				<span class='glyphicon glyphicon-export'></span> {{trans('adminlte_lang::message.export')}}
               				</button>&nbsp;&nbsp;
-              				<button type="button" class="import-modal btn btn-success btn-sm pull-right importE">
+              				<button type="button" class="import-modal btn btn-success btn-sm pull-right importE" onclick="location.href = '{{ route('devices.import') }}'">
                   				<span class='glyphicon glyphicon-import'></span> {{trans('adminlte_lang::message.importExcel')}}
               				</button>&nbsp;&nbsp;
-              				<button type="button" class="import-modal btn btn-orange btn-sm pull-right importK" style="background-color: #454C91; color:#FFF">
+              				<button type="button" class="import-modal btn btn-orange btn-sm pull-right importK" style="background-color: #454C91; color:#FFF" onclick="location.href = '{{ route('devices.importKontakt') }}'">
                   				<span class='glyphicon glyphicon-import'></span> {{trans('adminlte_lang::message.importKont')}}
               				</button>&nbsp;&nbsp;
               				<button type="button" class="btn btn-primary btn-sm pull-right create"  onclick="location.href = '{{ route('devices.create') }}'">
                   				<span class='glyphicon glyphicon-plus'></span> {{trans('adminlte_lang::message.create')}}
               				</button>&nbsp;&nbsp;
+              				
 					</div>
 					<div class="box-body">
 						@if ($message = Session::get('success'))
@@ -81,6 +82,7 @@ $deviceControl = new Iot_dispositivoController; ?>
 								</thead>
 								<tbody>
 									@foreach($devices as $device)
+										 
 										<tr class="item{{$device->id}}">
 											<td>{{ $device->id }}</td>
 											<td>{{ $device->name }}</td>
@@ -104,6 +106,11 @@ $deviceControl = new Iot_dispositivoController; ?>
 												@can('devices.destroy')
 												<a href="{{ action('Iot_dispositivoController@destroy', ['id' => $device->id]) }}" class="btn btn-danger btn-xs" title="Delete" data-toggle="tooltip" data-placement="top"><i class="fa fa-trash-o"></i></a>
 												@endcan
+												@can('devices.show')
+													<a href="#" data-toggle="assign"  class="btn btn-info btn-xs" title="Assgined to..."><i class="fa fa-share-alt"></i></a>
+												@endcan
+
+												
 			                                </td>            
 										</tr>
 									@endforeach
@@ -141,9 +148,18 @@ $deviceControl = new Iot_dispositivoController; ?>
     });
   });
 
+
   </script>  
 	<!-- jQuery scripts -->
 	<script type="text/javascript" src="js/script_devices.js"></script>  
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script>
+    $(document).ready(function(){
+        $('[data-toggle="assign"]').tooltip(); 
+    });
+    </script>
 @endsection
 

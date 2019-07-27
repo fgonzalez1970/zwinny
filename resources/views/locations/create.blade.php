@@ -9,8 +9,98 @@
   $APIKEY = getenv('GMAPS_APIKEY');
 ?>
 <style type="text/css">
-#mapa{width:100%;height:60%;float:right;}
+  #map{width:100%;height:600px;float:center; background-color: #CC0000;}
 </style>
+<script>
+// Initialize and add the map
+function initMap() {
+  // The location of Plaza del sol
+  var plaza = {lat: 20.651648, lng: -103.401438};
+  // The map, centered at Uluru
+  var map = new google.maps.Map(
+      document.getElementById('map'), {zoom: 12, center: plaza});
+  // The marker, positioned at Uluru
+  
+  var infoWindow;
+
+  infoWindow = new google.maps.InfoWindow;
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+            marker = new google.maps.Marker({position: pos, map: map});
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
+      
+      //captar el click en el mapa
+    geocoder = new google.maps.Geocoder();
+    google.maps.event.addListener(map, 'click', function (event) {
+    geocoder.geocode({
+      'latLng': event.latLng
+    }, function (results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          document.getElementById('address').value = results[0].formatted_address;
+          document.getElementById('coordinates').value = results[0].geometry.location;
+          //marker = new google.maps.Marker({
+                //position: event.latLng,
+                //title: results[0].formatted_address
+            //});
+
+          if (marker) {
+            marker.setPosition(event.latLng)
+          } else {
+            //alert("mark");
+            marker = new google.maps.Marker({
+              position: event.latLng,
+              map: map,
+              title: results[0].formatted_address
+            })
+          }
+          infoWindow.setContent(results[0].formatted_address + '<br/> Coordenadas: ' + results[0].geometry.location);
+          infoWindow.open(map, marker)
+        } else {
+          document.getElementById('mensaje').innerHTML = 'No se encontraron resultados'
+        }
+      } else {
+        document.getElementById('mensaje').innerHTML = 'Geocodificación  ha fallado debido a: ' + status
+      }
+    });
+  });
+  
+}//function initMap
+    </script>
+    <!--Load the API from the specified URL
+    * The async attribute allows the browser to render the page while the API loads
+    * The key parameter will contain your own API key (which is not needed for this tutorial)
+    * The callback parameter executes the initMap() function
+    -->
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key={{ getenv('GMAPS_APIKEY') }}&language=es&callback=initMap">
+    </script>
 @section('main-content')
 	<div class="container-fluid spark-screen">
 		<div class="row">
@@ -77,7 +167,7 @@
                     </div><br><br>
                     <div class="form-group">
                         <div class="col-lg-12">
-                            <div id="mapa"></div>
+                            <div id="map">Zona del Mapa</div>
                         </div>             
                     </div><br/>
                  
@@ -100,94 +190,6 @@
   <script type="text/javascript" src="/js/script_locations.js"></script>  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
   <script src="/js/vendor_plugins/timepicker/bootstrap-timepicker.min.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key={{ getenv('GMAPS_APIKEY') }}&language=es"></script>
-  <script type="text/javascript">
-    var map;
-    var geocoder;
-    var infoWindow;
-    var marker;
-
-window.onload = function () {
-  //alert("onload");
-  var latLng = new google.maps.LatLng(20.6539812,-103.4222798);
-  //alert("latlng"+latLng);
-  var opciones = {
-    center: latLng,
-    zoom: 8,
-    mapTypeId: 'roadmap'
-  };
-  
-  var map = new google.maps.Map(document.getElementById('mapa'), opciones);
-  
-  geocoder = new google.maps.Geocoder();
-  infoWindow = new google.maps.InfoWindow();
-
-  // Try HTML5 geolocation.
-        if (navigator.geolocation) {
-          //alert("geo");
-          navigator.geolocation.getCurrentPosition(function(position) {
-            var pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-            //poner un marcador
-
-            infoWindow.setPosition(pos);
-            infoWindow.setContent('Location found.');
-            infoWindow.open(map);
-            map.setCenter(pos);
-          }, function() {
-            //alert("error");
-            handleLocationError(true, infoWindow, map.getCenter());
-          });
-        } else {
-          // Browser doesn't support Geolocation
-          handleLocationError(false, infoWindow, map.getCenter());
-        }
-
-        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-        infoWindow.setPosition(pos);
-        infoWindow.setContent(browserHasGeolocation ?
-                              'Error: The Geolocation service failed.' :
-                              'Error: Your browser doesn\'t support geolocation.');
-        infoWindow.open(map);
-      }
-  
-    //captar el click en el mapa
-    google.maps.event.addListener(map, 'click', function (event) {
-    geocoder.geocode({
-      'latLng': event.latLng
-    }, function (results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        if (results[0]) {
-          document.getElementById('address').value = results[0].formatted_address;
-          document.getElementById('coordinates').value = results[0].geometry.location;
-          //marker = new google.maps.Marker({
-                //position: event.latLng,
-                //title: results[0].formatted_address
-            //});
-
-          if (marker) {
-            marker.setPosition(event.latLng)
-          } else {
-            //alert("mark");
-            marker = new google.maps.Marker({
-              position: event.latLng,
-              map: map,
-              title: results[0].formatted_address
-            })
-          }
-          infoWindow.setContent(results[0].formatted_address + '<br/> Coordenadas: ' + results[0].geometry.location);
-          infoWindow.open(map, marker)
-        } else {
-          document.getElementById('mensaje').innerHTML = 'No se encontraron resultados'
-        }
-      } else {
-        document.getElementById('mensaje').innerHTML = 'Geocodificación  ha fallado debido a: ' + status
-      }
-    });
-  });
-}//onload function
-  </script>  
+ 
 @endsection
 

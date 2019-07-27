@@ -98,10 +98,12 @@ class UserController extends Controller
 
             //actualizar roles
             $user->roles()->sync($request->get('roles'));
+            $mess= trans('adminlte_lang::message.createOK'); 
             return redirect()->route('users.index')
-            ->with('success', 'Registro creado satisfactoriamente');
+            ->with('success', $mess);
         } else {
-            $validator->errors()->add('Roles', 'El Usuario debe tener al menos 1 rol asignado');
+            $mess= trans('adminlte_lang::message.createUserNOK'); 
+            $validator->errors()->add('Roles', $mess);
             Input::flash();
             return redirect()->back()->withErrors($validator->errors());
         }
@@ -133,10 +135,12 @@ class UserController extends Controller
 
             //actualizar roles
             $user->roles()->sync($request->get('roles'));
+            $mess= trans('adminlte_lang::message.createOK'); 
             return redirect()->route('users_ten.index')
-            ->with('success', 'Registro creado satisfactoriamente');
+            ->with('success', $mess);
         } else {
-            $validator->errors()->add('Roles', 'El Usuario debe tener al menos 1 rol asignado');
+            $mess= trans('adminlte_lang::message.createUserNOK'); 
+            $validator->errors()->add('Roles', $mess);
             Input::flash();
             return redirect()->back()->withErrors($validator->errors());
         }
@@ -232,10 +236,12 @@ class UserController extends Controller
 
             //actualizar roles
             $user->roles()->sync($request->get('roles'));
+            $mess= trans('adminlte_lang::message.updateOK'); 
             return redirect()->route('users.index')
-            ->with('success', 'Registro actualizado satisfactoriamente');
+            ->with('success', $mess);
         } else {
-            $validator->errors()->add('Roles', 'El Usuario debe tener al menos 1 rol asignado');
+            $mess= trans('adminlte_lang::message.createUserNOK'); 
+            $validator->errors()->add('Roles', $mess);
             Input::flash();
             return redirect()->back()->withErrors($validator->errors());
         }
@@ -267,10 +273,12 @@ class UserController extends Controller
 
             //actualizar roles
             $user->roles()->sync($request->get('roles'));
+            $mess= trans('adminlte_lang::message.updateOK'); 
             return redirect()->route('users_ten.index')
-            ->with('success', 'Registro actualizado satisfactoriamente');
+            ->with('success', $mess);
         } else {
-            $validator->errors()->add('Roles', 'El Usuario debe tener al menos 1 rol asignado');
+            $mess= trans('adminlte_lang::message.createUserNOK'); 
+            $validator->errors()->add('Roles', $mess);
             Input::flash();
             return redirect()->back()->withErrors($validator->errors());
         }
@@ -286,7 +294,8 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return back()->with('success','User eliminado con éxito');
+        $mess= trans('adminlte_lang::message.deleteOK'); 
+        return back()->with('success',$mess);
     }
 
     /**
@@ -298,7 +307,8 @@ class UserController extends Controller
     public function destroyTenant(User $user)
     {
         $user->delete();
-        return back()->with('success','User eliminado con éxito');
+        $mess= trans('adminlte_lang::message.deleteOK'); 
+        return back()->with('success',$mess);
     }
 
     public function verificaClaveExterna($email, $clave){

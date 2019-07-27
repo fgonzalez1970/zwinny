@@ -9,6 +9,7 @@ use App\Iot_tipo_dispositivo;
 use App\Iot_subtipo_dispositivo;
 use App\Iot_dispositivos_tenant;
 use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Client;
 
 class Iot_dispositivoController extends Controller
 {
@@ -41,9 +42,7 @@ class Iot_dispositivoController extends Controller
         //asignados
         $hoy = date('Y-m-d');
         $counts[1] = Iot_dispositivos_tenant::where('date_down','>', $hoy)->count();
-        //$counts[1] = Iot_dispositivo::where('id_status', 1)->count();
-        
-        
+                
         return view('devices.index', compact('devices', 'counts'));
     }
 
@@ -73,8 +72,8 @@ class Iot_dispositivoController extends Controller
         //$validator = Validator::make(Input::all(), $this->rules);
        
         $dispo = Iot_dispositivo::create($data);
-        
-        return redirect()->route('devices.index')->with('success','Registro creado satisfactoriamente');
+        $mess= trans('adminlte_lang::message.createOK'); 
+        return redirect()->route('devices.index')->with('success',$mess);
     }
 
     /**
@@ -126,8 +125,8 @@ class Iot_dispositivoController extends Controller
         
         //buscamos el dispositivo a editar
         $device = Iot_dispositivo::findOrFail($id)->update($data);
-        
-        return redirect()->route('devices.index')->with('success','Registro actualizado satisfactoriamente');
+        $mess= trans('adminlte_lang::message.updateOK'); 
+        return redirect()->route('devices.index')->with('success',$mess);
     }
 
     /**
@@ -145,10 +144,13 @@ class Iot_dispositivoController extends Controller
         //dd($disp_tenants);
         if (count($disp_tenants)>0){
             //dd("tiene");
-            return redirect()->route('devices.index')->with('error','El dispositivo está relacionado al menos a un inquilino');
+            $mess= trans('adminlte_lang::message.deleteDeviceNOK'); 
+            return redirect()->route('devices.index')->with('error',$mess);
         } else {
+            
             $device->delete();
-            return redirect()->route('devices.index')->with('success','Registro eliminado satisfactoriamente');
+            $mess= trans('adminlte_lang::message.deleteOK'); 
+            return redirect()->route('devices.index')->with('success',$mess);
         }
         
     }
@@ -219,7 +221,7 @@ class Iot_dispositivoController extends Controller
 
     public function import(Request $request)
     {
-        
+        //import desde archivo excel
         $data = $request->all();
         $input = Input::all();
         $filename = $_FILES['file_import']['name'];
@@ -252,8 +254,8 @@ class Iot_dispositivoController extends Controller
                     'id_subtipo' => $id_subtipo,
                     'id_kontaktTag'    => $sheetData[$i][1],
                     'UUDD' => $sheetData[$i][2],
-                    'date_up'       => $sheetData[$i][4],
-                    'date_down'           => $sheetData[$i][4],
+                    'date_up'   => $sheetData[$i][4],
+                    'date_down' => $sheetData[$i][4],
                     ];
 
                     //insertamos el registro en la bd
@@ -266,15 +268,125 @@ class Iot_dispositivoController extends Controller
                 $success = false;
                 $error = $e->getMessage();
                 DB::rollback();
-                return Response::json(array('errors' => [$error]));
+                $mess=trans('adminlte_lang::message.importNOK').": ".$error;
+                return Response::json(array('errors' => [$mess]));
             }
 
             if ($success) {
-                $mensaje="Importación realizada con éxito";
-                return response()->json(array('mnsj' => ['Archivo importado con éxito.']));
+                $mess=trans('adminlte_lang::message.importOK');
+                return response()->json(array('mnsj' => [$mess]));
             } 
             //print_r($sheetData);
         }//if file
-            
+        $mess= trans('adminlte_lang::message.updateOK'); 
+        return redirect()->route('devices.index')->with('success',$mess);   
     }//function import
+
+    public function importKontakt()
+    {
+        
+        $client = new Client([
+            // Base URI is used with relative requests
+            'base_uri' => 'https://api.kontakt.io',
+            // You can set any number of default request options.
+            'timeout'  => 2.0,
+        ]);
+        $APIKEY = getenv('KKT_APIKEY');
+        $response = $client->request('GET', '/device?access=SUPERVISOR& HTTP/1.1', [
+'headers' => [
+'Accept' => 'application/vnd.com.kontakt+json;version=10',
+'Api-Key'=> $APIKEY,
+'User-Agent' => 'Paw/3.1.4 (Macintosh; OS X/10.13.3) GCDHTTPRequest'
+
+]]);
+        $code = $response->getStatusCode();
+        $body = json_decode($response->getBody()->getContents());
+        $devices = $body->devices;
+        //dd($devices);
+    //simulo el arreglo de los devices, para seguir...
+    /*$datos = array( 
+        'devices' => array(  
+            array('id' => "abcd",
+                'uniqueId'  => "001",
+                'alias'  => "aaaa",
+                'deviceType' => 'BEACON',
+                'model' => 'SMART_BEACON',
+                'product' => 'Smart Beacon SB16-2'),
+            array('id' => "efgh",
+                'uniqueId'  => "002",
+                'alias'  => "bbbb",
+                'deviceType' => 'BEACON',
+                'model' => 'SMART_BEACON',
+                'product' => 'Smart Beacon SB16-2'),
+        ),
+        'searchMeta' => array(
+                'count' => "2",
+                'order'  => "ASC"
+        )
+    );*/
+    $i=0;
+    //iniciamos transacción en bd para hacer el import completo
+    DB::beginTransaction();
+    try {
+    foreach ($devices as $device) {
+        //$i++;
+        $count = Iot_dispositivo::where('id_kontaktTag','=',$device->uniqueId)->count();
+        //dd ($count);
+        $today = date('Y-m-d H:i');
+        $fecha = "2037-12-31 23:59:59";
+        $nuevafecha = date("Y-m-d H:i",strtotime($fecha));
+        
+        if ($count==0){
+            //dd('no existe');
+            // Lo insertamos en la bd
+            $id_tipo = ($device->deviceType=='BEACON')?1:2;
+            $id_subtipo = ($device->model=='SMART_BEACON')?1:2;
+            $dispo = [
+                    'name' => $device->product,
+                    'id_tipo' => $id_tipo,
+                    'id_subtipo' => $id_subtipo,
+                    'id_kontaktTag'    => $device->uniqueId,
+                    'UUID' => $device->id,
+                    'date_up' =>$today,
+                    'date_down' =>$nuevafecha,
+                    ];
+
+                    //insertamos el registro en la bd
+                    $result = Iot_dispositivo::insert($dispo); 
+        }//if count
+    }//foreach
+    DB::commit();
+    $success = true;
+} catch (\Exception $e) {
+    $success = false;
+    $error= $e->getMessage();
+    DB::rollback();
+    $mess=trans('adminlte_lang::message.importKtkNOK').": ".$error;
+    return redirect()->route('devices.index')->with('error',$mess);
+}
+
+    if ($success) {
+        $mess=trans('adminlte_lang::message.importKtkOK');
+        return redirect()->route('devices.index')->with('success',$mess);
+    } 
+
+    
+}//function importKontakt
+
+    public function importKontakt2()
+    {
+        $curl = curl_init();
+        $url = 'https://api.kontakt.io/device?access=SUPERVISOR& HTTP/1.1';
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Accept' => 'application/vnd.com.kontakt+json;version=10',
+            'Api-Key' => '',
+            'User-Agent' => 'Paw/3.1.4 (Macintosh; OS X/10.13.3) GCDHTTPRequest'
+   ));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        //execute the POST request
+        $response = curl_exec($curl);
+        dd($response);
+            
+    }//function importKontakt
 }//fin clase
